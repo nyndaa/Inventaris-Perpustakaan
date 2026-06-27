@@ -188,7 +188,6 @@ a {
     justify-content: space-between;
     margin-bottom: 48px;
     width: 100%;
-    position: relative;
 }
 
 .brand-logo-area {
@@ -199,8 +198,8 @@ a {
 
 .sidebar-toggle-btn {
     position: absolute;
-    right: -38px; /* Hovering on the sidebar border border edge */
-    top: 6px;
+    right: -14px; /* Center of the button floats exactly on the sidebar's right border */
+    top: 38px;
     width: 28px;
     height: 28px;
     border-radius: var(--radius-full);
@@ -250,6 +249,7 @@ a {
     font-weight: 700;
     letter-spacing: -0.5px;
     background: linear-gradient(135deg, var(--text-primary), #818cf8);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
