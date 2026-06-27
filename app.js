@@ -676,13 +676,13 @@ function openAddForm() {
     document.getElementById("book-cover-file").value = "";
     const previewImg = document.getElementById("cover-preview-img");
     const previewPlaceholder = document.getElementById("cover-preview-placeholder");
-    const removeCoverBtn = document.getElementById("remove-cover-btn");
+    const uploadWrapper = document.querySelector(".cover-upload-wrapper");
     
     previewImg.src = "";
     previewImg.style.display = "none";
     previewPlaceholder.style.display = "flex";
     previewPlaceholder.textContent = "No Cover";
-    if (removeCoverBtn) removeCoverBtn.style.display = "none";
+    if (uploadWrapper) uploadWrapper.classList.remove("has-cover");
 
     // Reset Error Classes
     document.querySelectorAll(".form-group").forEach(el => el.classList.remove("has-error"));
@@ -721,19 +721,19 @@ function openEditForm(id) {
     
     const previewImg = document.getElementById("cover-preview-img");
     const previewPlaceholder = document.getElementById("cover-preview-placeholder");
-    const removeCoverBtn = document.getElementById("remove-cover-btn");
+    const uploadWrapper = document.querySelector(".cover-upload-wrapper");
 
     if (cover) {
         previewImg.src = cover;
         previewImg.style.display = "block";
         previewPlaceholder.style.display = "none";
-        if (removeCoverBtn) removeCoverBtn.style.display = "flex";
+        if (uploadWrapper) uploadWrapper.classList.add("has-cover");
     } else {
         previewImg.src = "";
         previewImg.style.display = "none";
         previewPlaceholder.style.display = "flex";
         previewPlaceholder.textContent = "No Cover";
-        if (removeCoverBtn) removeCoverBtn.style.display = "none";
+        if (uploadWrapper) uploadWrapper.classList.remove("has-cover");
     }
 
     // Set Category Selection
@@ -803,12 +803,12 @@ function processImageFile(file) {
             
             const previewImg = document.getElementById("cover-preview-img");
             const previewPlaceholder = document.getElementById("cover-preview-placeholder");
-            const removeCoverBtn = document.getElementById("remove-cover-btn");
+            const uploadWrapper = document.querySelector(".cover-upload-wrapper");
             
             previewImg.src = compressedDataUrl;
             previewImg.style.display = "block";
             previewPlaceholder.style.display = "none";
-            if (removeCoverBtn) removeCoverBtn.style.display = "flex";
+            if (uploadWrapper) uploadWrapper.classList.add("has-cover");
             
             showToast("Foto sampul berhasil diunggah!", "success");
         };
@@ -823,13 +823,13 @@ function removeBookCover() {
     
     const previewImg = document.getElementById("cover-preview-img");
     const previewPlaceholder = document.getElementById("cover-preview-placeholder");
-    const removeCoverBtn = document.getElementById("remove-cover-btn");
+    const uploadWrapper = document.querySelector(".cover-upload-wrapper");
     
     previewImg.src = "";
     previewImg.style.display = "none";
     previewPlaceholder.style.display = "flex";
     previewPlaceholder.textContent = "No Cover";
-    if (removeCoverBtn) removeCoverBtn.style.display = "none";
+    if (uploadWrapper) uploadWrapper.classList.remove("has-cover");
     
     showToast("Foto sampul dihapus.", "info");
 }
