@@ -220,23 +220,23 @@ function initTheme() {
     if (savedTheme === "light") {
         document.body.classList.remove("dark-theme");
         document.body.classList.add("light-theme");
-        themeText.textContent = "Mode Terang";
+        if (themeText) themeText.textContent = "Mode Terang";
     } else {
         document.body.classList.remove("light-theme");
         document.body.classList.add("dark-theme");
-        themeText.textContent = "Mode Gelap";
+        if (themeText) themeText.textContent = "Mode Gelap";
     }
 }
 
 function toggleTheme() {
     if (document.body.classList.contains("dark-theme")) {
         document.body.classList.replace("dark-theme", "light-theme");
-        themeText.textContent = "Mode Terang";
+        if (themeText) themeText.textContent = "Mode Terang";
         localStorage.setItem("librikeep_theme", "light");
         showToast("Beralih ke Mode Terang", "info");
     } else {
         document.body.classList.replace("light-theme", "dark-theme");
-        themeText.textContent = "Mode Gelap";
+        if (themeText) themeText.textContent = "Mode Gelap";
         localStorage.setItem("librikeep_theme", "dark");
         showToast("Beralih ke Mode Gelap", "info");
     }
@@ -322,13 +322,21 @@ function clearLoginErrors() {
 // 4b. Sidebar Collapse & Mobile Slide-out Handlers
 // ==========================================================================
 function toggleSidebarCollapse() {
-    const isCollapsed = appSidebar.classList.toggle("collapsed");
-    document.body.classList.toggle("sidebar-collapsed-layout", isCollapsed);
-    
-    if (isCollapsed) {
-        sidebarToggle.title = "Tampilkan Sidebar";
+    if (window.innerWidth <= 768) {
+        if (appSidebar.classList.contains("mobile-open")) {
+            closeMobileSidebar();
+        } else {
+            openMobileSidebar();
+        }
     } else {
-        sidebarToggle.title = "Sembunyikan Sidebar";
+        const isCollapsed = appSidebar.classList.toggle("collapsed");
+        document.body.classList.toggle("sidebar-collapsed-layout", isCollapsed);
+        
+        if (isCollapsed) {
+            sidebarToggle.title = "Tampilkan Sidebar";
+        } else {
+            sidebarToggle.title = "Sembunyikan Sidebar";
+        }
     }
 }
 
