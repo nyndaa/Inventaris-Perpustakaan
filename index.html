@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LibriKeep — Inventaris Perpustakaan Modern</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="light-theme">
+    <!-- App Container -->
+    <div class="app-container">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="app-sidebar">
+            <div class="brand">
+                <div class="brand-logo-area">
+                    <div class="brand-icon">
+                        <i data-lucide="book-open"></i>
+                    </div>
+                    <span class="brand-name">LibriKeep</span>
+                </div>
+                <button class="sidebar-toggle-btn" id="sidebar-toggle" title="Sembunyikan Sidebar">
+                    <i data-lucide="chevron-left" class="toggle-icon"></i>
+                </button>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" id="sidebar-dashboard-btn">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="theme-toggle-container">
+                    <span class="theme-label" id="theme-text">Mode Terang</span>
+                    <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle Theme">
+                        <i data-lucide="sun" class="sun-icon"></i>
+                        <i data-lucide="moon" class="moon-icon"></i>
+                    </button>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar">N</div>
+                    <div class="user-info">
+                        <span class="user-name">Nadia</span>
+                        <span class="user-role">Admin Utama</span>
+                    </div>
+                    <button class="logout-btn" id="logout-btn" title="Keluar">
+                        <i data-lucide="log-out"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header">
+                <div class="header-left">
+                    <button class="hamburger-menu-btn" id="mobile-sidebar-toggle" title="Buka Menu">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="header-title-area">
+                        <h1>Inventaris Buku</h1>
+                        <p class="subtitle">Manajemen koleksi perpustakaan secara real-time dan efisien.</p>
+                    </div>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="add-book-trigger">
+                        <i data-lucide="plus"></i>
+                        <span>Buku Baru</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Stats Grid -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper blue">
+                        <i data-lucide="book"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="stat-total-titles">0</span>
+                        <span class="stat-label">Total Judul Buku</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper emerald">
+                        <i data-lucide="layers"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="stat-total-stock">0</span>
+                        <span class="stat-label">Total Salinan (Stok)</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper amber">
+                        <i data-lucide="alert-triangle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="stat-low-stock">0</span>
+                        <span class="stat-label">Stok Kritis (&lt; 3)</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper violet">
+                        <i data-lucide="tags"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="stat-categories">0</span>
+                        <span class="stat-label">Kategori/Genre</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Control Bar (Search, Filter, View Options) -->
+            <section class="control-bar-card">
+                <div class="search-box">
+                    <i data-lucide="search" class="search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Cari berdasarkan judul, penulis, atau ISBN...">
+                    <button class="clear-search-btn" id="clear-search" style="display: none;">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                
+                <div class="filters-group">
+                    <div class="filter-wrapper">
+                        <label for="filter-category"><i data-lucide="filter"></i> Kategori</label>
+                        <select id="filter-category">
+                            <option value="all">Semua Kategori</option>
+                            <!-- Dynamically populated -->
+                        </select>
+                    </div>
+                    
+                    <div class="filter-wrapper">
+                        <label for="sort-by"><i data-lucide="arrow-up-down"></i> Urutkan</label>
+                        <select id="sort-by">
+                            <option value="newest">Terbaru Ditambahkan</option>
+                            <option value="title-asc">Judul (A-Z)</option>
+                            <option value="title-desc">Judul (Z-A)</option>
+                            <option value="stock-asc">Stok Terendah</option>
+                            <option value="stock-desc">Stok Tertinggi</option>
+                            <option value="year-desc">Tahun Terbit (Baru)</option>
+                            <option value="year-asc">Tahun Terbit (Lama)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="view-toggle-group">
+                        <button class="view-btn active" id="view-grid" title="Tampilan Grid">
+                            <i data-lucide="grid"></i>
+                        </button>
+                        <button class="view-btn" id="view-table" title="Tampilan Tabel">
+                            <i data-lucide="list"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Books Container -->
+            <section class="books-display-container">
+                <!-- Grid View -->
+                <div class="books-grid" id="books-grid-view">
+                    <!-- Cards will be dynamically rendered here -->
+                </div>
+                
+                <!-- Table View -->
+                <div class="books-table-wrapper" id="books-table-view" style="display: none;">
+                    <table class="books-table">
+                        <thead>
+                            <tr>
+                                <th>Sampul & Judul</th>
+                                <th>Penulis</th>
+                                <th>Kategori</th>
+                                <th>Penerbit & Tahun</th>
+                                <th>ISBN</th>
+                                <th>Stok</th>
+                                <th class="text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="books-table-body">
+                            <!-- Table rows will be dynamically rendered here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="empty-state-view" style="display: none;">
+                    <div class="empty-icon">
+                        <i data-lucide="search-code"></i>
+                    </div>
+                    <h3>Buku Tidak Ditemukan</h3>
+                    <p>Tidak ada buku yang cocok dengan kriteria pencarian atau filter Anda.</p>
+                    <button class="btn btn-secondary" id="reset-filters-btn">Reset Pencarian & Filter</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ADD/EDIT BOOK MODAL -->
+    <div class="modal-backdrop" id="book-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 id="modal-title">Tambah Buku Baru</h2>
+                <button class="modal-close" id="close-modal-btn">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <form id="book-form" novalidate>
+                <input type="hidden" id="book-id">
+                
+                <div class="form-grid">
+                    <!-- Title -->
+                    <div class="form-group full-width">
+                        <label for="book-title">Judul Buku <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i data-lucide="bookmark" class="input-icon"></i>
+                            <input type="text" id="book-title" placeholder="Masukkan judul lengkap buku..." required>
+                        </div>
+                        <span class="error-msg" id="error-title">Judul buku wajib diisi.</span>
+                    </div>
+                    
+                    <!-- Author -->
+                    <div class="form-group">
+                        <label for="book-author">Penulis/Pengarang <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i data-lucide="user" class="input-icon"></i>
+                            <input type="text" id="book-author" placeholder="Nama penulis..." required>
+                        </div>
+                        <span class="error-msg" id="error-author">Penulis wajib diisi.</span>
+                    </div>
+
+                    <!-- Category (Select with Custom Option) -->
+                    <div class="form-group">
+                        <label for="book-category">Kategori/Genre <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i data-lucide="tag" class="input-icon"></i>
+                            <select id="book-category" required>
+                                <option value="" disabled selected>Pilih Kategori...</option>
+                                <option value="Fiksi">Fiksi</option>
+                                <option value="Non-Fiksi">Non-Fiksi</option>
+                                <option value="Sains & Teknologi">Sains & Teknologi</option>
+                                <option value="Sejarah & Budaya">Sejarah & Budaya</option>
+                                <option value="Biografi">Biografi</option>
+                                <option value="Pendidikan">Pendidikan</option>
+                                <option value="custom">+ Tambah Kategori Baru...</option>
+                            </select>
+                        </div>
+                        <!-- Inline input for new custom category, hidden by default -->
+                        <div class="input-wrapper custom-category-wrapper" id="custom-category-group" style="display: none; margin-top: 8px;">
+                            <input type="text" id="book-custom-category" placeholder="Tulis kategori baru...">
+                        </div>
+                        <span class="error-msg" id="error-category">Kategori wajib dipilih.</span>
+                    </div>
+
+                    <!-- Publisher -->
+                    <div class="form-group">
+                        <label for="book-publisher">Penerbit <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i data-lucide="building" class="input-icon"></i>
+                            <input type="text" id="book-publisher" placeholder="Nama penerbit..." required>
+                        </div>
+                        <span class="error-msg" id="error-publisher">Penerbit wajib diisi.</span>
+                    </div>
+
+                    <!-- Year -->
+                    <div class="form-group">
+                        <label for="book-year">Tahun Terbit <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i data-lucide="calendar" class="input-icon"></i>
+                            <input type="number" id="book-year" placeholder="Contoh: 2024" min="1000" max="2099" required>
+                        </div>
+                        <span class="error-msg" id="error-year">Tahun terbit harus antara 1000 s.d 2099.</span>
+                    </div>
+
+                    <!-- ISBN -->
+                    <div class="form-group">
+                        <label for="book-isbn">ISBN <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i data-lucide="barcode" class="input-icon"></i>
+                            <input type="text" id="book-isbn" placeholder="Contoh: 978-602-03-3160-7" required>
+                        </div>
+                        <span class="error-msg" id="error-isbn">ISBN wajib diisi dengan format valid.</span>
+                    </div>
+
+                    <!-- Stock -->
+                    <div class="form-group">
+                        <label for="book-stock">Jumlah Stok <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i data-lucide="boxes" class="input-icon"></i>
+                            <input type="number" id="book-stock" placeholder="Jumlah salinan..." min="0" required>
+                        </div>
+                        <span class="error-msg" id="error-stock">Stok harus berupa angka &ge; 0.</span>
+                    </div>
+
+                    <!-- Cover URL (Optional) -->
+                    <div class="form-group full-width">
+                        <label for="book-cover">URL Sampul Buku <span class="optional">(Opsional)</span></label>
+                        <div class="input-wrapper">
+                            <i data-lucide="image" class="input-icon"></i>
+                            <input type="url" id="book-cover" placeholder="https://example.com/cover.jpg (Kosongkan untuk auto-generate)">
+                        </div>
+                        <span class="error-msg" id="error-cover">Masukkan format URL gambar yang valid.</span>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-modal-btn">Batal</button>
+                    <button type="submit" class="btn btn-primary" id="save-book-btn">
+                        <i data-lucide="save"></i>
+                        <span>Simpan Buku</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- DELETE CONFIRMATION MODAL -->
+    <div class="modal-backdrop" id="delete-modal">
+        <div class="modal-card modal-confirm">
+            <div class="confirm-icon">
+                <i data-lucide="alert-triangle"></i>
+            </div>
+            <h2>Konfirmasi Hapus</h2>
+            <p>Apakah Anda yakin ingin menghapus buku <strong id="delete-book-title">...</strong> dari inventaris?</p>
+            <p class="warning-subtext">Tindakan ini tidak dapat dibatalkan.</p>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancel-delete-btn">Batal</button>
+                <button class="btn btn-danger" id="confirm-delete-btn">Hapus Buku</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIN OVERLAY -->
+    <div class="login-backdrop" id="login-overlay">
+        <div class="login-card">
+            <div class="login-brand">
+                <div class="brand-icon">
+                    <i data-lucide="book-open"></i>
+                </div>
+                <span class="brand-name">LibriKeep</span>
+            </div>
+            <h2>Selamat Datang Kembali</h2>
+            <p class="login-subtitle">Silakan login untuk mengelola inventaris perpustakaan.</p>
+            
+            <form id="login-form" novalidate>
+                <div class="form-group">
+                    <label for="login-username">Username <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <i data-lucide="user" class="input-icon"></i>
+                        <input type="text" id="login-username" placeholder="Masukkan username..." required>
+                    </div>
+                    <span class="error-msg" id="error-login-username">Username wajib diisi.</span>
+                </div>
+                
+                <div class="form-group" style="margin-top: 16px;">
+                    <label for="login-password">Password <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <i data-lucide="lock" class="input-icon"></i>
+                        <input type="password" id="login-password" placeholder="Masukkan password..." required>
+                        <button type="button" class="password-toggle-btn" id="login-password-toggle" title="Tampilkan Password">
+                            <i data-lucide="eye" class="eye-icon"></i>
+                            <i data-lucide="eye-off" class="eye-off-icon" style="display: none;"></i>
+                        </button>
+                    </div>
+                    <span class="error-msg" id="error-login-password">Password wajib diisi.</span>
+                </div>
+
+                <div class="login-error-alert" id="login-general-error" style="display: none;">
+                    <i data-lucide="alert-circle" style="width: 16px; height: 16px; margin-right: 8px; flex-shrink: 0;"></i>
+                    <span>Username atau password salah!</span>
+                </div>
+
+                <button type="submit" class="btn btn-primary login-submit-btn" style="margin-top: 24px; width: 100%; height: 46px; border-radius: var(--radius-sm);">
+                    <span>Masuk sebagai Admin</span>
+                    <i data-lucide="arrow-right" style="width: 18px; height: 18px; margin-left: 6px;"></i>
+                </button>
+            </form>
+
+            <div class="login-tip">
+                <i data-lucide="help-circle" style="width: 14px; height: 14px; margin-right: 6px; flex-shrink: 0; color: var(--primary);"></i>
+                <span>Tips: Gunakan username <strong>Nadia</strong> &amp; password <strong>12345678</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
