@@ -9,69 +9,58 @@
 const DEFAULT_BOOKS = [
     {
         id: "book-1",
-        title: "Bumi",
-        author: "Tere Liye",
-        publisher: "Gramedia Pustaka Utama",
-        year: 2014,
-        isbn: "978-602-03-3243-7",
+        title: "Atomic Habits",
+        author: "James Clear",
+        publisher: "Penguin Random House",
+        year: 2018,
+        isbn: "978-1-84-794183-1",
         stock: 8,
-        category: "Fiksi",
-        cover: "" // Left blank to test auto-generator
+        category: "Non-Fiksi",
+        cover: "images/atomicHabits.jpg"
     },
     {
         id: "book-2",
-        title: "Filosofi Teras",
-        author: "Henry Manampiring",
-        publisher: "Penerbit Buku Kompas",
-        year: 2018,
-        isbn: "978-602-412-518-9",
+        title: "Ikigai",
+        author: "Héctor García & Francesc Miralles",
+        publisher: "Penguin Books",
+        year: 2016,
+        isbn: "978-0-14-313072-7",
         stock: 15,
         category: "Non-Fiksi",
-        cover: ""
+        cover: "images/ikigai.jpg"
     },
     {
         id: "book-3",
-        title: "Laskar Pelangi",
-        author: "Andrea Hirata",
-        publisher: "Bentang Pustaka",
-        year: 2005,
-        isbn: "979-3062-79-7",
+        title: "Mindset",
+        author: "Carol S. Dweck",
+        publisher: "Robinson",
+        year: 2017,
+        isbn: "978-1-47-213995-5",
         stock: 2, // Low stock alert
-        category: "Fiksi",
-        cover: ""
+        category: "Pendidikan",
+        cover: "images/mindset.jpg"
     },
     {
         id: "book-4",
-        title: "Sapiens: Riwayat Singkat Umat Manusia",
-        author: "Yuval Noah Harari",
-        publisher: "Pustaka Alvabet",
-        year: 2017,
-        isbn: "978-602-9193-07-7",
+        title: "From Zero to Millionaire",
+        author: "Bodo Schäfer",
+        publisher: "Elex Media Komputindo",
+        year: 2020,
+        isbn: "978-623-00-1736-0",
         stock: 5,
-        category: "Sejarah & Budaya",
-        cover: ""
+        category: "Pendidikan",
+        cover: "images/fromZeroToMillionaire.jpg"
     },
     {
         id: "book-5",
-        title: "Cosmos",
-        author: "Carl Sagan",
-        publisher: "Gramedia Pustaka Utama",
-        year: 2016,
-        isbn: "978-602-03-2464-7",
+        title: "Almendra",
+        author: "Sohn Won-pyung",
+        publisher: "HarperVia",
+        year: 2020,
+        isbn: "978-0-06-296111-2",
         stock: 1, // Critical stock
-        category: "Sains & Teknologi",
-        cover: ""
-    },
-    {
-        id: "book-6",
-        title: "Mantappu Jiwa",
-        author: "Jerome Polin Sijabat",
-        publisher: "Gramedia Pustaka Utama",
-        year: 2019,
-        isbn: "978-602-06-3241-4",
-        stock: 12,
-        category: "Biografi",
-        cover: ""
+        category: "Fiksi",
+        cover: "images/almendra.jpg"
     }
 ];
 
@@ -187,7 +176,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function loadBooks() {
     const stored = localStorage.getItem("librikeep_books");
+    
+    // Explicit fail-safe check: reset database if it contains old book titles
+    let needsReset = false;
     if (stored) {
+        try {
+            const parsed = JSON.parse(stored);
+            if (Array.isArray(parsed)) {
+                const oldTitles = ["Bumi", "Laskar Pelangi", "Filosofi Teras", "Cosmos"];
+                needsReset = parsed.some(book => oldTitles.includes(book.title));
+            }
+        } catch (e) {
+            needsReset = true;
+        }
+    }
+    
+    if (stored && !needsReset) {
         try {
             books = JSON.parse(stored);
         } catch (e) {
@@ -196,9 +200,10 @@ function loadBooks() {
             saveBooks();
         }
     } else {
-        // First run: Seed data
+        // Seed data with images folder references
         books = [...DEFAULT_BOOKS];
         saveBooks();
+        localStorage.setItem("librikeep_has_migrated_images_v4", "true");
     }
 }
 
@@ -666,6 +671,19 @@ function openAddForm() {
     customCategoryGroup.style.display = "none";
     bookCustomCategoryInput.removeAttribute("required");
 
+    // Reset Cover Component
+    document.getElementById("book-cover").value = "";
+    document.getElementById("book-cover-file").value = "";
+    const previewImg = document.getElementById("cover-preview-img");
+    const previewPlaceholder = document.getElementById("cover-preview-placeholder");
+    const removeCoverBtn = document.getElementById("remove-cover-btn");
+    
+    previewImg.src = "";
+    previewImg.style.display = "none";
+    previewPlaceholder.style.display = "flex";
+    previewPlaceholder.textContent = "No Cover";
+    if (removeCoverBtn) removeCoverBtn.style.display = "none";
+
     // Reset Error Classes
     document.querySelectorAll(".form-group").forEach(el => el.classList.remove("has-error"));
 
@@ -695,7 +713,28 @@ function openEditForm(id) {
     document.getElementById("book-year").value = book.year;
     document.getElementById("book-isbn").value = book.isbn;
     document.getElementById("book-stock").value = book.stock;
-    document.getElementById("book-cover").value = book.cover || "";
+    
+    // Set Cover
+    const cover = book.cover || "";
+    document.getElementById("book-cover").value = cover;
+    document.getElementById("book-cover-file").value = "";
+    
+    const previewImg = document.getElementById("cover-preview-img");
+    const previewPlaceholder = document.getElementById("cover-preview-placeholder");
+    const removeCoverBtn = document.getElementById("remove-cover-btn");
+
+    if (cover) {
+        previewImg.src = cover;
+        previewImg.style.display = "block";
+        previewPlaceholder.style.display = "none";
+        if (removeCoverBtn) removeCoverBtn.style.display = "flex";
+    } else {
+        previewImg.src = "";
+        previewImg.style.display = "none";
+        previewPlaceholder.style.display = "flex";
+        previewPlaceholder.textContent = "No Cover";
+        if (removeCoverBtn) removeCoverBtn.style.display = "none";
+    }
 
     // Set Category Selection
     // If it's a dynamic category not standard in default list, it's still rendered by populateFormCategories
@@ -720,6 +759,79 @@ window.openEditForm = openEditForm;
 
 function closeBookModal() {
     bookModal.classList.remove("open");
+}
+
+function processImageFile(file) {
+    if (!file) return;
+    
+    if (!file.type.startsWith("image/")) {
+        showToast("File yang dipilih harus berupa gambar!", "error");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+            // Resize Image using Canvas
+            const canvas = document.createElement("canvas");
+            const maxDim = 400; // maximum dimension limit
+            let width = img.width;
+            let height = img.height;
+            
+            if (width > height) {
+                if (width > maxDim) {
+                    height = Math.round(height * maxDim / width);
+                    width = maxDim;
+                }
+            } else {
+                if (height > maxDim) {
+                    width = Math.round(width * maxDim / height);
+                    height = maxDim;
+                }
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // Compress image to JPEG at 70% quality
+            const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.7);
+            
+            document.getElementById("book-cover").value = compressedDataUrl;
+            
+            const previewImg = document.getElementById("cover-preview-img");
+            const previewPlaceholder = document.getElementById("cover-preview-placeholder");
+            const removeCoverBtn = document.getElementById("remove-cover-btn");
+            
+            previewImg.src = compressedDataUrl;
+            previewImg.style.display = "block";
+            previewPlaceholder.style.display = "none";
+            if (removeCoverBtn) removeCoverBtn.style.display = "flex";
+            
+            showToast("Foto sampul berhasil diunggah!", "success");
+        };
+        img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeBookCover() {
+    document.getElementById("book-cover").value = "";
+    document.getElementById("book-cover-file").value = "";
+    
+    const previewImg = document.getElementById("cover-preview-img");
+    const previewPlaceholder = document.getElementById("cover-preview-placeholder");
+    const removeCoverBtn = document.getElementById("remove-cover-btn");
+    
+    previewImg.src = "";
+    previewImg.style.display = "none";
+    previewPlaceholder.style.display = "flex";
+    previewPlaceholder.textContent = "No Cover";
+    if (removeCoverBtn) removeCoverBtn.style.display = "none";
+    
+    showToast("Foto sampul dihapus.", "info");
 }
 
 function handleCategoryChange() {
@@ -818,18 +930,8 @@ function handleFormSubmit(e) {
         setError("book-stock", false);
     }
 
-    // Cover URL validation
-    if (cover && cover.trim() !== "") {
-        try {
-            new URL(cover);
-            setError("book-cover", false);
-        } catch (_) {
-            setError("book-cover", true);
-            isValid = false;
-        }
-    } else {
-        setError("book-cover", false);
-    }
+    // Cover validation: only local uploads are allowed, no URL checking needed
+    setError("book-cover", false);
 
     if (!isValid) return;
 
@@ -987,13 +1089,31 @@ function bindEvents() {
     bookCategorySelect.addEventListener("change", handleCategoryChange);
     bookForm.addEventListener("submit", handleFormSubmit);
 
+    // Book Cover Image Upload / Remove Handlers
+    const coverFileEl = document.getElementById("book-cover-file");
+    const removeCoverBtn = document.getElementById("remove-cover-btn");
+    if (coverFileEl) {
+        coverFileEl.addEventListener("change", (e) => {
+            if (e.target.files && e.target.files[0]) {
+                processImageFile(e.target.files[0]);
+            }
+        });
+    }
+    if (removeCoverBtn) {
+        removeCoverBtn.addEventListener("click", removeBookCover);
+    }
+
     // Dynamic error clearing on keyup/change
     const fields = ["book-title", "book-author", "book-category", "book-publisher", "book-year", "book-isbn", "book-stock", "book-custom-category", "book-cover"];
     fields.forEach(fid => {
         const el = document.getElementById(fid);
         if (el) {
             const eventName = el.tagName === "SELECT" ? "change" : "input";
-            el.addEventListener(eventName, () => setError(fid, false));
+            el.addEventListener(eventName, () => {
+                setError(fid, false);
+                // Also clear main cover error
+                setError("book-cover", false);
+            });
         }
     });
 

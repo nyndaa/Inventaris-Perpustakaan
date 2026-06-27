@@ -299,14 +299,29 @@
                         <span class="error-msg" id="error-stock">Stok harus berupa angka &ge; 0.</span>
                     </div>
 
-                    <!-- Cover URL (Optional) -->
+                    <!-- Cover Photo Selector -->
                     <div class="form-group full-width">
-                        <label for="book-cover">URL Sampul Buku <span class="optional">(Opsional)</span></label>
-                        <div class="input-wrapper">
-                            <i data-lucide="image" class="input-icon"></i>
-                            <input type="url" id="book-cover" placeholder="https://example.com/cover.jpg (Kosongkan untuk auto-generate)">
+                        <label>Sampul Buku <span class="optional">(Format gambar: JPG, PNG, GIF)</span></label>
+                        <div class="cover-upload-wrapper">
+                            <div class="cover-preview-box" id="cover-preview-box">
+                                <span id="cover-preview-placeholder">No Cover</span>
+                                <img id="cover-preview-img" src="" alt="Preview Sampul" style="display: none;">
+                            </div>
+                            <div class="cover-upload-actions">
+                                <label for="book-cover-file" class="btn btn-secondary cover-upload-btn" style="width: 100%;">
+                                    <i data-lucide="upload-cloud"></i>
+                                    <span>Unggah Foto Sampul</span>
+                                </label>
+                                <input type="file" id="book-cover-file" accept="image/*" style="display: none;">
+                                
+                                <button type="button" class="btn btn-danger" id="remove-cover-btn" style="display: none; height: 40px; justify-content: center; align-items: center; gap: 8px; width: 100%;">
+                                    <i data-lucide="trash-2"></i>
+                                    <span>Hapus Foto</span>
+                                </button>
+                            </div>
                         </div>
-                        <span class="error-msg" id="error-cover">Masukkan format URL gambar yang valid.</span>
+                        <input type="hidden" id="book-cover" value="">
+                        <span class="error-msg" id="error-cover">Gagal memuat file foto yang dipilih.</span>
                     </div>
                 </div>
 
